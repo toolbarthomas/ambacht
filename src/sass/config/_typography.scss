@@ -1,0 +1,40 @@
+$font-sizes: (
+  'base': (
+    'default': 0.675rem,
+    'desktop': 0.825rem,
+  ),
+  'display1': (
+    'default': 2.5rem,
+    'desktop': 3.475rem,
+  ),
+  'display2': (
+    'default': 2.2rem,
+    'desktop': 3rem,
+  ),
+  'display3': (
+    'default': 2.1rem,
+    'desktop': 2.475rem,
+  ),
+  'h1': (
+    'default': 1.8rem,
+    'desktop': 2rem,
+  ),
+  'h2': (
+    'default': 1.675rem,
+    'desktop': 1.8rem,
+  ),
+  'h3': (
+    'default': 1.625rem,
+  ),
+  'h4': (
+    'default': 1.475em,
+  ),
+  'h5': (
+    'default': 1.25rem,
+  ),
+  'h6': (
+    'default': 1rem,
+  ),
+) !default;
+
+$initial-font-family: sans-serif !default;

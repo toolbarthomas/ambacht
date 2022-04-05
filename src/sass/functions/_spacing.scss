@@ -1,0 +1,9 @@
+@import "./property";
+@import "../config/spacings";
+
+/**
+ * Outputs a value from the $spacing Sass map.
+ */
+@function spacing($name: 's') {
+  @return property($name, $spacings);
+}

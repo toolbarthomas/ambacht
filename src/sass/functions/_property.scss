@@ -1,0 +1,24 @@
+/**
+  * Sass Helper function to output a Style schematic, the first value of the map
+  * will be used as fallback value.
+  */
+@function property($name, $map) {
+  @if $name and $map {
+    @if (map-has-key($map, $name)) {
+      @return map-get($map, $name);
+    }
+    @else {
+      $i: 0;
+
+      @each $name, $value in $map {
+        @if $i == 0 {
+          @return $value
+        }
+
+        $i: $i + 1;
+      }
+    }
+
+    @return $return;
+  }
+}

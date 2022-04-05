@@ -1,0 +1,10 @@
+{{ attach_library('ambacht/base-button') }}
+
+<base-button
+  {{ pending ? 'pending' }}
+  {{ disabled ? 'disabled' }}
+  {% if displayIcon and iconSource %}
+    iconSource="{{ iconSource }}"
+  {% endif %}
+  iconPlacement="{{ displayIconAfter ? 'after' : 'before' }}"
+>{{ title }}</base-button>

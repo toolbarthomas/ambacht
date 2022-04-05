@@ -1,0 +1,36 @@
+{
+  "name": "ambacht",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Framework Independent Component Library",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prestart": "harbor clean",
+    "start": "harbor --task=resolve,stylesheets,javascripts,export,setup --styleguide --watch "
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/toolbarthomas/ambacht.git"
+  },
+  "keywords": [
+    "Lit",
+    "Framework",
+    "Web-Components"
+  ],
+  "author": "Thomas van der Velde <contact@toolbarthomas.net>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/toolbarthomas/ambacht/issues"
+  },
+  "homepage": "https://github.com/toolbarthomas/ambacht#readme",
+  "dependencies": {
+    "@lit/reactive-element": "^1.3.1",
+    "@webcomponents/webcomponentsjs": "^2.6.0",
+    "lit": "^2.2.1"
+  },
+  "devDependencies": {
+    "@toolbarthomas/harbor": "^0.120.1",
+    "sass-colors": "^1.0.14"
+  }
+}

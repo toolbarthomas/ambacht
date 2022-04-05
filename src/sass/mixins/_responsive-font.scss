@@ -1,0 +1,28 @@
+@import '../config/*';
+@import './breakpoints';
+
+/**
+ * Sass utility mixin that returns the defined font-size for each breakpoint.
+ */
+@mixin responsive-font($type: 'base') {
+  @if (map-has-key($font-sizes, $type)) {
+
+    $size: map-get(map-get($font-sizes, $type), 'default');
+    font-size: $size;
+
+    $cache: $size;
+
+    @each $breakpoint in map-keys($breakpoints) {
+      $s: map-get(map-get($font-sizes, $type), $breakpoint);
+
+      @if $s and $s !=inherit and $s !=$cache {
+        @include breakpoint($breakpoint) {
+          font-size: $s;
+        }
+      }
+
+      // Hold the current value to prevent duplicate media queries.
+      $cache: $s;
+    }
+  }
+}

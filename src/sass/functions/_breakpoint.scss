@@ -1,0 +1,9 @@
+@import "./property";
+@import "../config/spacings";
+
+/**
+ * Outputs a value from the $breakpoints Sass map.
+ */
+@function breakpoint($name: 'default') {
+  @return property($name, $breakpoints);
+}

@@ -1,0 +1,214 @@
+@import "node_modules/sass-colors";
+
+@import "sass/core";
+
+$buttonColors: ('grey',
+  'red',
+  'green',
+  'lime',
+  'orange',
+  'purple',
+  'pink'
+);
+
+$darkColors: ('grey': 'grey'
+);
+
+$iconSize: 1rem;
+
+.base-button {
+  $root: &;
+
+  &,
+  & * {
+    box-sizing: border-box;
+  }
+
+  position: relative;
+  appearance: none;
+  display: inline-block;
+  padding: spacing('m') spacing('l');
+  text-align: center;
+  font-weight: 600;
+  font-size: 1rem;
+  min-width: 6rem;
+  border-radius: 1.4rem;
+  font-family: sans-serif;
+  line-height: 1;
+  border: none;
+  color: color('shades', 'white');
+  background-color: color('blue', 'base');
+  transition: transform ease-in-out 50ms, outline ease-in-out 100ms;
+  cursor: pointer;
+  border: solid 0.125rem transparent;
+
+  @include responsive-font();
+
+  @each $color in $buttonColors {
+    &--#{$color} {
+      background-color: color($color, 'base');
+
+      @if map-get($darkColors, $color) {
+        color: color($color, 'darken-4');
+      }
+    }
+  }
+
+  &--is-full-width {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    margin: 00.1875rem 0;
+
+    &:first-child {
+      margin-top: 0;
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &--is-minimal {
+    width: auto;
+    padding: 0.675rem;
+  }
+
+  &:not([disabled]) {
+    outline: solid 0.125rem transparent;
+
+    &:hover {
+      background-color: color('blue', 'accent-2');
+    }
+
+    &:focus {
+      outline-color: rgba(color('shades', 'black'), 0.1);
+      outline-width: 0.1875rem;
+    }
+  }
+
+  @each $color in $buttonColors {
+    &--#{$color}:not([disabled]) {
+      &:hover {
+        background-color: color($color, 'darken-2');
+      }
+    }
+  }
+
+  &--is-pressed:not([disabled]) {
+
+    &,
+    &:hover {
+      transform: scale(0.98);
+      background-color: color('blue', 'accent-4');
+    }
+
+    &:focus {
+      outline-width: 0;
+    }
+  }
+
+  @each $color in $buttonColors {
+    &--#{$color}#{$root}--is-pressed:not([disabled]) {
+
+      &,
+      &:hover {
+        background-color: color($color, 'darken-3');
+      }
+    }
+  }
+
+  &--is-pending,
+  &--is-disabled {
+    cursor: not-allowed;
+  }
+
+  &--is-disabled {
+    opacity: 0.8;
+  }
+
+  &__content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    #{$root}--is-pending & {
+      visibility: hidden;
+    }
+  }
+
+  &__text {
+    #{$root}--is-minimal & {
+      display: none;
+    }
+  }
+
+  &__icon-wrapper {
+    display: inline-block;
+    margin-right: 0.5em;
+    margin-left: -$iconSize;
+    order: -1;
+    flex-shrink: 0;
+
+    #{$root}--with-icon-after & {
+      order: 0;
+      margin-right: -$iconSize;
+      margin-left: 0.5em;
+    }
+
+    #{$root}--is-minimal & {
+      margin: 0;
+    }
+  }
+
+  &__icon {
+    display: block;
+    width: $iconSize;
+    height: $iconSize;
+    fill: currentColor;
+  }
+
+  &__progress-indicator {
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 1rem;
+    height: 1rem;
+  }
+
+  &__progress-indicator-ring {
+    display: block;
+    position: absolute;
+    width: 0.8em;
+    height: 0.8em;
+    margin: 0.1em;
+    border: 0.1em solid #fff;
+    border-radius: 50%;
+    animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+    border-color: #fff transparent transparent transparent;
+
+    &:nth-child(1) {
+      animation-delay: -450ms;
+    }
+
+    &:nth-child(2) {
+      animation-delay: -300ms;
+    }
+
+    &:nth-child(3) {
+      animation-delay: -150ms;
+    }
+  }
+}
+
+@keyframes lds-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
