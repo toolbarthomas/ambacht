@@ -22,6 +22,7 @@ export default {
     },
     JsCompiler: {
       entry: {
+        core: 'core/**/**.js',
         components: 'components/**/**.js',
         typography: 'typography/**/**.js',
       },
