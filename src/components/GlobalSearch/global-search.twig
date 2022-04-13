@@ -1,0 +1,48 @@
+{{ attach_library('ambacht/global-search') }}
+
+<script>
+  window.onSelect = (value, callback) => {
+    console.log(value);
+  }
+
+  window.onSearch = (context, callback) => {
+    context.enablePending();
+
+    const url = 'https://www.kanker.nl/api/zorgpaden/2d7debeb-fab2-41bb-a02f-01999e780d0e/zorgpadsecties';
+
+    fetch(url, {
+      method: 'GET',
+      mode: 'cors',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).catch((exception) => console.log(exception)).then((result) => result && result.json()).then((data) => {
+      const results = data.data.map(({ attributes, links }) => {
+        if (!attributes) {
+          return;
+        }
+
+        return {
+          title: attributes.title,
+          description: attributes.summary.replace(/(<([^>]+)>)/gi, "").substring(256, 0),
+          link: links.self.href,
+        }
+      }).filter(e => e)
+
+      callback({
+        results,
+      });
+
+    }).finally(() => {
+      context.disablePending();
+    });
+  }
+</script>
+
+<global-search
+  placeholder="{{ placeholder }}"
+  spriteSource="{{ spriteSource }}"
+  onSearch="onSearch"
+  onSelect="onSelect"
+  icon="{{ icon }}
+"></global-search>

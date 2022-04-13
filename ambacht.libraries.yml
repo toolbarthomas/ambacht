@@ -10,3 +10,8 @@ base-button:
   dependencies:
     - ambacht/core
 
+global-search:
+  js:
+    dist/components/GlobalSearch/index.js: { attributes: { type: 'module' } }
+  dependencies:
+    - ambacht/core

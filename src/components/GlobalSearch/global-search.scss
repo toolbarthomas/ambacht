@@ -1,0 +1,213 @@
+@import "node_modules/sass-colors";
+
+@import "sass/core";
+
+.global-search {
+  $root: &;
+
+  position: relative;
+  font-family: sans-serif;
+
+  &__results {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  &__result {
+    border-bottom: solid spacing('pixel') color('grey', 'lighten-1');
+
+      &:last-child {
+        border-bottom: 0;
+      }
+  }
+
+  &__result-text-content {
+    display: block;
+    flex-grow: 1;
+  }
+
+  &__result-media-content {
+    order: -1;
+    flex-shrink: 0;
+    max-width: 4rem;
+    margin-right: spacing('m');
+  }
+
+  &__result-image {
+    width: 100%;
+    height: auto;
+  }
+
+  &__result-link,
+  &__result-label {
+    padding: spacing('m') spacing('l');
+    display: flex;
+    flex-grow: 1;
+    color: currentColor;
+    text-decoration: none;
+  }
+
+  &__result-link {
+    &:focus {
+      background-color: rgba(color('blue', 'accent-2'), 0.1);
+      outline: none;
+    }
+  }
+
+  &__result-title {
+    font-weight: 600;
+
+    #{$root}__result-link &:hover {
+      text-decoration: underline;
+    }
+
+    #{$root}__result-link:focus & {
+      color: color('blue');
+    }
+  }
+
+  &__result-description {
+    margin: spacing('s') 0 0;
+    font-size: smaller;
+  }
+
+  &__input-wrapper {
+    padding: spacing('s') spacing('l');
+    border: solid spacing('pixel') color('grey', 'lighten-1');
+    display: flex;
+    align-items: center;
+    border-radius: spacing('s');
+    background-color: color('shades', 'white');
+
+    &:focus-within {
+      border-color: color('blue');
+      outline: solid spacing('xs') rgba(color('blue', 'accent-2'), 0.1);
+    }
+
+    #{$root}--is-active & {
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+  }
+
+  &__icon {
+    width: spacing('xl');
+    height: spacing('xl');
+  }
+
+  &__input {
+    padding: 0 spacing('m');
+    flex-grow: 1;
+    transition: opacity 200ms ease-in-out;
+    @include responsive-font();
+
+    &,
+    &:focus,
+    &[disabled] {
+      border: none;
+      outline: none;
+      background-color: transparent;
+    }
+
+    #{$root}--is-pending & {
+      opacity: 0.6;
+    }
+  }
+
+  &__submit {
+    border: none;
+    padding: spacing('s') spacing('l');
+    background: none;
+    color: currentColor;
+    font-weight: 700;
+    appearance: none;
+    color: color('blue');
+
+    #{$root}--is-active & {
+      visibility: visible;
+      opacity: 1;
+      transition: opacity 200ms ease-in-out, visibility 0ms linear 0ms;
+    }
+
+    &,
+    #{$root}--is-pending & {
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity 200ms ease-in-out, visibility 0ms linear 200ms;
+    }
+
+    &:focus,
+    &:active {
+      background-color: color('grey', 'lighten-4');
+      outline: none;
+      border: none;
+      border-radius: spacing('xl');
+    }
+  }
+
+  &__overlay {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: color('shades', 'white');
+    border: solid spacing('pixel') color('grey', 'lighten-1');
+    border-top: 0;
+  }
+
+  &__progress-indicator {
+    display: block;
+    position: absolute;
+    top: 50%;
+    right: spacing('xs');
+    transform: translateY(-50%);
+    width: 1rem;
+    height: 1rem;
+    visibility: hidden;
+    opacity: 0;
+    transition: all 200ms ease-in-out, visibility 0ms linear 200ms;
+
+    #{$root}--is-pending & {
+      right: spacing('m');
+      visibility: visible;
+      opacity: 1;
+      transition: all 200ms ease-in-out, visibility 0ms linear 0ms;
+    }
+  }
+
+  &__progress-indicator-ring {
+    display: block;
+    position: absolute;
+    width: 0.8em;
+    height: 0.8em;
+    margin: 0.1em;
+    border: 0.1em solid #fff;
+    border-radius: 50%;
+    box-sizing: border-box;
+    animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+    border-color: color('blue') transparent transparent transparent;
+
+    &:nth-child(1) {
+      animation-delay: -450ms;
+    }
+
+    &:nth-child(2) {
+      animation-delay: -300ms;
+    }
+
+    &:nth-child(3) {
+      animation-delay: -150ms;
+    }
+  }
+}
+
+@keyframes lds-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
