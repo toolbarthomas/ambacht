@@ -1,0 +1,196 @@
+@use "sass:math";
+
+@import "node_modules/sass-colors";
+
+@import "sass/core";
+
+.ambacht-modal {
+  $node: &;
+
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  z-index: $z-index-modal;
+  flex-direction: column;
+  justify-content: center;
+  transition: transform 0ms linear 0ms;
+
+  &::before {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(black, 0.35);
+    content: ' ';
+    display: block;
+    transition: opacity 200ms ease-in-out 0ms, visibility 0ms linear 0ms;
+  }
+
+  &[aria-hidden=true] {
+    transform: translateY(-100%);
+    transition: transform 0ms linear 200ms;
+
+    &::before {
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 200ms ease-in-out 0ms, visibility 0ms linear 200ms;
+    }
+  }
+
+  &__wrapper {
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    position: relative;
+    padding: 0;
+    display: flex;
+    will-change: visibility, opacity;
+    transition:
+      opacity 200ms ease-in-out 0ms,
+      visibility 0ms linear 0ms;
+
+    #{$node}[aria-hidden=true] & {
+      opacity: 0;
+      visibility: hidden;
+      transition:
+        opacity 200ms ease-in-out 0ms,
+        visibility 0ms linear 200ms;
+    }
+
+    #{$node}--is-fullscreen & {
+      overflow: hidden;
+    }
+  }
+
+  &__panel {
+    display: flex;
+    max-width: $max-width--compact;
+    flex-direction: column;
+    margin: auto;
+    transition: 200ms ease-in-out 50ms;
+    transition-property: box-shadow, transform;
+    will-change: transform, box-shadow;
+    width: 100%;
+    padding: spacing('xl');
+
+    #{$node}--aligns-from-top & {
+      margin-top: 0;
+      margin-bottom: auto;
+      height: auto;
+    }
+
+    #{$node}--aligns-from-right & {
+      margin-right: 0;
+      margin-left: auto;
+    }
+
+    #{$node}--aligns-from-bottom & {
+      margin-top: auto;
+      margin-bottom: 0;
+      height: auto;
+    }
+
+    #{$node}--aligns-from-left & {
+      margin-right: auto;
+      margin-left: 0;
+    }
+
+    #{$node}--aligns-from-right#{$node}--aligns-from-left & {
+      margin-left: 0;
+      margin-right: 0;
+      max-width: none;
+    }
+
+    #{$node}--aligns-from-top#{$node}--aligns-from-bottom & {
+      margin-top: 0;
+      margin-bottom: 0;
+    }
+
+
+    // min-height: 100vh;
+    // min-height: calc(100vh - env(safe-area-inset-bottom));
+    // min-height: -webkit-fill-available;
+
+    #{$node}--is-fullscreen & {
+      padding: 0;
+      height: 100%;
+      border-radius: spacing('l');
+      overflow: hidden;
+      background-color: white;
+      padding-bottom: 0;
+      box-shadow: 0 0 spacing('s') rgba(black, 0.4);
+    }
+
+    #{$node}[aria-hidden=true] &,
+    #{$node}--aligns-from-top[aria-hidden=true] & {
+      box-shadow: none;
+      transform: translateY(-5vh);
+    }
+
+    #{$node}--aligns-from-right[aria-hidden=true] & {
+      transform: translateX(5vh);
+    }
+
+    #{$node}--aligns-from-left[aria-hidden=true] & {
+      transform: translateX(-5vh);
+    }
+
+    #{$node}--aligns-from-top#{$node}--aligns-from-right#{$node}--aligns-from-left#{$node}--aligns-from-bottom[aria-hidden=true] & {
+      transform: scale(0.95);
+    }
+  }
+
+  &__panel-header {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    background-color: rgba(white, 0.95);
+    padding: spacing('xl');
+    transition: 200ms ease-out 0ms;
+    transition-property: padding margin;
+
+    #{$node}:not(#{$node}--is-fullscreen) &--is-sticky,
+    #{$node}--is-fullscreen &--has-overflow {
+      box-shadow: 0 spacing('pixel') spacing('xs') rgba(black, 0.2);
+    }
+
+    #{$node}:not(#{$node}--is-fullscreen) &--is-sticky {
+      position: sticky;
+      border-radius: spacing('l') spacing('l') 0 0;
+      padding-top: spacing('xl') + spacing('l');
+      top: 0 - spacing('l');
+
+      &:last-child {
+        border-bottom-left-radius: spacing('l') spacing('l') 0 0;
+        border-bottom-right-radius: spacing('l') spacing('l') 0 0;
+      }
+    }
+  }
+
+  &__panel-content {
+    padding: spacing('l');
+
+    #{$node}--is-fullscreen & {
+      flex-grow: 1;
+      overflow: auto;
+      margin-bottom: spacing('l');
+    }
+
+    #{$node}:not(#{$node}--is-fullscreen) {
+      border-radius: spacing('l');
+      overflow: hidden;
+      background-color: white;
+      box-shadow: 0 0 spacing('s') rgba(black, 0.4);
+
+      #{$node}__panel-header ~ & {
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+      }
+    }
+  }
+}

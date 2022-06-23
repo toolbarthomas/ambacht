@@ -6,8 +6,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "prestart": "harbor clean",
-    "start": "harbor --task=resolve,stylesheets,javascripts,export,setup --styleguide --watch "
+    "start": "harbor --task=run --styleguide --watch "
   },
   "repository": {
     "type": "git",
@@ -25,12 +24,12 @@
   },
   "homepage": "https://github.com/toolbarthomas/ambacht#readme",
   "dependencies": {
-    "@lit/reactive-element": "^1.3.1",
+    "@lit/reactive-element": "^1.3.2",
     "@webcomponents/webcomponentsjs": "^2.6.0",
-    "lit": "^2.2.1"
+    "lit": "^2.2.6"
   },
   "devDependencies": {
-    "@toolbarthomas/harbor": "^0.120.1",
+    "@toolbarthomas/harbor": "^0.124.2",
     "sass-colors": "^1.0.14"
   }
 }

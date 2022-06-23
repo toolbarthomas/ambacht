@@ -1,5 +1,8 @@
 core:
   version: 0.1.x
+  css:
+    base:
+      dist/core/defaults.css: {}
   js:
     dist/vendors/@webcomponents/webcomponentsjs/webcomponents-loader.js: {}
     dist/vendors/@lit/reactive-element/polyfill-support.js/polyfill-support.js: {}
@@ -13,5 +16,17 @@ base-button:
 global-search:
   js:
     dist/components/GlobalSearch/index.js: { attributes: { type: 'module' } }
+  dependencies:
+    - ambacht/core
+
+variable-heading:
+  js:
+    dist/typography/VariableHeading/index.js: { attributes: { type: 'module' } }
+  dependencies:
+    - ambacht/core
+
+modal:
+  js:
+    dist/components/Modal/ambacht.modal.js: { attributes: { type: 'module' } }
   dependencies:
     - ambacht/core

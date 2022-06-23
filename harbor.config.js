@@ -2,11 +2,17 @@ export default {
   workers: {
     AssetExporter: {
       entry: {
+        core: '**/core/**/*.css',
         components: '**/components/**/*.css',
         typography: '**/typography/**/*.css',
       },
       options: {
         includeLiteral: [
+          {
+            entry: 'core',
+            export: 'css',
+            import: 'https://cdn.jsdelivr.net/gh/lit/dist@2.2.1/core/lit-core.min.js',
+          },
           {
             entry: 'components',
             export: 'css',
@@ -35,8 +41,15 @@ export default {
     },
     SassCompiler: {
       entry: {
+        core: '**/core/**/**.scss',
         components: '**/components/**/**.scss',
         typography: '**/typography/**/**.scss',
+      },
+    },
+    StyleguideHelper: {
+      options: {
+        configurationExtensions: ['yml', 'yaml', 'json'],
+        ignoreInitial: true,
       },
     },
   },

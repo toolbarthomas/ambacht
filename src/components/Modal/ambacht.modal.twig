@@ -1,0 +1,12 @@
+{{ attach_library('ambacht/modal') }}
+
+<script>
+
+</script>
+
+<ambacht-modal id="{{ id|default('modal') }}" closeOnBackdropClick alignRight isFullscreen {{ attributes }}>{{ content }}</ambacht-modal>
+
+<button class="button" aria-controls="{{ id|default('modal') }}" onClick="document.dispatchEvent(new CustomEvent('modal:open', { detail: { target: document.getElementById('{{id|default('modal')}}') } } ))">Open as dispatchEvent</button>
+<button class="button" onClick="document.dispatchEvent(new CustomEvent('modal:update', { detail: { target: document.getElementById('{{id|default('modal')}}'), data: 'lorem' } } ))">Update as dispatchEvent</button>
+<button class="button" onClick="document.dispatchEvent(new CustomEvent('modal:update', { detail: { target: document.getElementById('{{id|default('modal')}}'), data: '' } } ))">Cleanup as dispatchEvent</button>
+<button class="button" aria-controls="{{ id|default('modal') }}">Open as aria-controls</button>
