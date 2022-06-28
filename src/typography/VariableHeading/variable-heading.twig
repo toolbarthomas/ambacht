@@ -1,0 +1,22 @@
+{{ attach_library('ambacht/variable-heading') }}
+
+<variable-heading
+  {% if element %}
+    as="{{ element }}"
+  {% endif %}
+
+  {% if size %}
+    size="{{ size }}"
+  {% endif %}
+
+  {% if link %}
+    link="{{ link }}"
+  {% endif %}
+>{{ title }}</variable-heading>
+
+
+<variable-heading
+  {% if link %}
+    link="{{ link }}"
+  {% endif %}
+>{{ title }}</variable-heading>

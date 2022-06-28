@@ -1,10 +1,16 @@
-{{ attach_library('ambacht/modal') }}
+{{ attach_library('ambacht/flexible-modal') }}
 
 <script>
+  window.onOpen2 = (event, context) => {
+    console.log('onOpen', event, context);
+  };
 
+  const onOpen = () => {
+    console.log('as const');
+  }
 </script>
 
-<ambacht-modal id="{{ id|default('modal') }}" closeOnBackdropClick alignRight isFullscreen {{ attributes }}>{{ content }}</ambacht-modal>
+<flexible-modal id="{{ id|default('modal') }}" onOpen="onOpen" closeOnBackdropClick alignRight isFullscreen {{ attributes }}>{{ content }}</flexible-modal>
 
 <button class="button" aria-controls="{{ id|default('modal') }}" onClick="document.dispatchEvent(new CustomEvent('modal:open', { detail: { target: document.getElementById('{{id|default('modal')}}') } } ))">Open as dispatchEvent</button>
 <button class="button" onClick="document.dispatchEvent(new CustomEvent('modal:update', { detail: { target: document.getElementById('{{id|default('modal')}}'), data: 'lorem' } } ))">Update as dispatchEvent</button>

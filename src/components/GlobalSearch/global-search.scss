@@ -8,6 +8,15 @@
   position: relative;
   font-family: sans-serif;
 
+  &--has-no-results {
+    animation: shake 300ms linear;
+  }
+
+  &__no-results {
+    padding: spacing('m');
+    display: block;
+  }
+
   &__results {
     list-style: none;
     margin: 0;
@@ -82,7 +91,7 @@
 
     &:focus-within {
       border-color: color('blue');
-      outline: solid spacing('xs') rgba(color('blue', 'accent-2'), 0.1);
+      box-shadow: 0 0 0 spacing('xs') rgba(color('blue', 'accent-2'), 0.1);
     }
 
     #{$root}--is-active & {
@@ -115,6 +124,7 @@
     }
   }
 
+  &__reset,
   &__submit {
     border: none;
     padding: spacing('s') spacing('l');
@@ -124,7 +134,17 @@
     appearance: none;
     color: color('blue');
 
-    #{$root}--is-active & {
+    &:focus,
+    &:active {
+      background-color: color('grey', 'lighten-4');
+      outline: none;
+      border: none;
+      border-radius: spacing('xl');
+    }
+  }
+
+  &__reset {
+    #{$root}--has-value & {
       visibility: visible;
       opacity: 1;
       transition: opacity 200ms ease-in-out, visibility 0ms linear 0ms;
@@ -136,13 +156,20 @@
       opacity: 0;
       transition: opacity 200ms ease-in-out, visibility 0ms linear 200ms;
     }
+  }
 
-    &:focus,
-    &:active {
-      background-color: color('grey', 'lighten-4');
-      outline: none;
-      border: none;
-      border-radius: spacing('xl');
+  &__submit {
+    #{$root}--is-active & {
+      visibility: visible;
+      opacity: 1;
+      transition: opacity 200ms ease-in-out, visibility 0ms linear 0ms;
+    }
+
+    &,
+    #{$root}--is-pending & {
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity 200ms ease-in-out, visibility 0ms linear 200ms;
     }
   }
 
@@ -184,8 +211,7 @@
     margin: 0.1em;
     border: 0.1em solid #fff;
     border-radius: 50%;
-    box-sizing: border-box;
-    animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+    animation: rotation 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
     border-color: color('blue') transparent transparent transparent;
 
     &:nth-child(1) {
@@ -202,12 +228,36 @@
   }
 }
 
-@keyframes lds-ring {
+@keyframes rotation {
   0% {
     transform: rotate(0deg);
   }
 
   100% {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes shake {
+  8%,
+  41% {
+    transform: translateX(-1em);
+  }
+
+  25%,
+  58% {
+    transform: translateX(1em);
+  }
+
+  75% {
+    transform: translateX(-0.5em);
+  }
+
+  92% {
+    transform: translateX(0.5em);
+  }
+
+  0%, 100% {
+    transform: translateX(0);
   }
 }

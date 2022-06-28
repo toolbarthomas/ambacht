@@ -4,7 +4,7 @@
 
 @import "sass/core";
 
-.ambacht-modal {
+.flexible-modal {
   $node: &;
 
   position: fixed;
@@ -111,6 +111,16 @@
       margin-bottom: 0;
     }
 
+    #{$node}:not(#{$node}--is-fullscreen) & {
+      border-radius: spacing('l');
+      background-color: white;
+      box-shadow: 0 0 spacing('s') rgba(black, 0.4);
+    }
+
+    #{$node}:not(#{$node}--is-fullscreen) #{$node}__panel-header ~ & {
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
+    }
 
     // min-height: 100vh;
     // min-height: calc(100vh - env(safe-area-inset-bottom));
@@ -159,7 +169,7 @@
       box-shadow: 0 spacing('pixel') spacing('xs') rgba(black, 0.2);
     }
 
-    #{$node}:not(#{$node}--is-fullscreen) &--is-sticky {
+    #{$node}:not(#{$node}--is-fullscreen) & {
       position: sticky;
       border-radius: spacing('l') spacing('l') 0 0;
       padding-top: spacing('xl') + spacing('l');
@@ -179,18 +189,6 @@
       flex-grow: 1;
       overflow: auto;
       margin-bottom: spacing('l');
-    }
-
-    #{$node}:not(#{$node}--is-fullscreen) {
-      border-radius: spacing('l');
-      overflow: hidden;
-      background-color: white;
-      box-shadow: 0 0 spacing('s') rgba(black, 0.4);
-
-      #{$node}__panel-header ~ & {
-        border-top-left-radius: 0;
-        border-top-right-radius: 0;
-      }
     }
   }
 }

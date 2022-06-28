@@ -1,0 +1,7 @@
+{
+  "title": "Example heading",
+  "size": "banner",
+  "element": "h2",
+  "id": "heading-id",
+  "link": "http://example.com"
+}

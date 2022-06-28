@@ -6,7 +6,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "harbor --task=run --styleguide --watch "
+    "prestart": "harbor --task=run --minify",
+    "start": "harbor --task=generate --styleguide --watch"
   },
   "repository": {
     "type": "git",
@@ -29,7 +30,7 @@
     "lit": "^2.2.6"
   },
   "devDependencies": {
-    "@toolbarthomas/harbor": "^0.124.2",
+    "@toolbarthomas/harbor": "^0.126.0",
     "sass-colors": "^1.0.14"
   }
 }

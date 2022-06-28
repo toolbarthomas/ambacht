@@ -48,6 +48,7 @@ export default {
     },
     StyleguideHelper: {
       options: {
+        ignoreKeywords: ['ambacht'],
         configurationExtensions: ['yml', 'yaml', 'json'],
         ignoreInitial: true,
       },

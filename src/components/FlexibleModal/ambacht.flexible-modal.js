@@ -1,8 +1,8 @@
 import { AmbachtElement, createRef, css, html, ref } from '../../core/Ambacht.js';
 
-import styles from './ambacht.styles.css.asset.js';
+import styles from './ambacht.flexible-modal.css.asset.js';
 
-export class AmbachtModal extends AmbachtElement {
+export class FlexibleModal extends AmbachtElement {
   constructor(props) {
     super();
 
@@ -17,7 +17,6 @@ export class AmbachtModal extends AmbachtElement {
     } = props || {};
 
     this.closeLabel = 'Close';
-
     this.closeOnBackdropClick = closeOnBackdropClick || false;
 
     this.isExpanded = isExpanded || false;
@@ -36,7 +35,6 @@ export class AmbachtModal extends AmbachtElement {
     this.panelContentContext = createRef();
     this.isSticky = false;
     this.hasOverflow = false;
-    this.throttle = 500;
   }
 
   static get properties() {
@@ -59,6 +57,7 @@ export class AmbachtModal extends AmbachtElement {
       closeOnBackdropClick: {
         type: Boolean,
       },
+      onOpen: {},
       isExpanded: {
         type: Boolean,
       },
@@ -82,8 +81,6 @@ export class AmbachtModal extends AmbachtElement {
     if (this.wrapperContext && this.wrapperContext.value) {
       this.wrapperContext.value.addEventListener('scroll', this.handleWrapperScroll.bind(this));
       this.wrapperContext.value.addEventListener('click', this.handleWrapperClick.bind(this));
-
-      console.log(this.wrapperContext);
     }
 
     if (this.panelContentContext && this.panelContentContext.value) {
@@ -101,23 +98,23 @@ export class AmbachtModal extends AmbachtElement {
     const classes = [];
 
     if (this.isFullscreen) {
-      classes.push('ambacht-modal--is-fullscreen');
+      classes.push('flexible-modal--is-fullscreen');
     }
 
     if (this.alignTop) {
-      classes.push('ambacht-modal--aligns-from-top');
+      classes.push('flexible-modal--aligns-from-top');
     }
 
     if (this.alignRight) {
-      classes.push('ambacht-modal--aligns-from-right');
+      classes.push('flexible-modal--aligns-from-right');
     }
 
     if (this.alignBottom) {
-      classes.push('ambacht-modal--aligns-from-bottom');
+      classes.push('flexible-modal--aligns-from-bottom');
     }
 
     if (this.alignLeft) {
-      classes.push('ambacht-modal--aligns-from-left');
+      classes.push('flexible-modal--aligns-from-left');
     }
 
     return classes.join(' ');
@@ -130,7 +127,7 @@ export class AmbachtModal extends AmbachtElement {
     const classes = [];
 
     if (this.hasOverflow) {
-      classes.push('ambacht-modal__panel-header--has-overflow');
+      classes.push('flexible-modal__panel-header--has-overflow');
     }
 
     return classes.join(' ');
@@ -162,6 +159,8 @@ export class AmbachtModal extends AmbachtElement {
     if (!ariaControls || ariaControls.length === 1 || ariaControls.indexOf('#') !== 0) {
       return;
     }
+
+    console.log('click');
 
     event.preventDefault();
 
@@ -198,6 +197,8 @@ export class AmbachtModal extends AmbachtElement {
     if (!event || !event.detail) {
       return;
     }
+
+    console.log('handleHook');
 
     const { target } = event.detail;
 
@@ -244,6 +245,10 @@ export class AmbachtModal extends AmbachtElement {
     if (this.isExpanded) {
       return;
     }
+
+    const onOpen = this._fn(this.onOpen);
+
+    this._handleEvent(event, this, onOpen);
 
     this._update('isExpanded', () => (this.isExpanded = true));
   }
@@ -367,15 +372,15 @@ export class AmbachtModal extends AmbachtElement {
    */
   render() {
     return html`<div
-      class="ambacht-modal ${this.defineContainerClasses()}"
+      class="flexible-modal ${this.defineContainerClasses()}"
       aria-hidden="${this.isExpanded ? 'false' : 'true'}"
       aria-disabled="${this.isExpanded ? 'false' : 'true'}"
       ${ref(this.context)}
     >
-      <div class="ambacht-modal__wrapper" ${ref(this.wrapperContext)}>
+      <div class="flexible-modal__wrapper" ${ref(this.wrapperContext)}>
         <div
-          class="ambacht-modal__panel ${this.isSticky && this.isFullscreen
-            ? 'ambacht-modal__panel--is-sticky'
+          class="flexible-modal__panel ${this.isSticky && !this.isFullscreen
+            ? 'flexible-modal__panel--is-sticky'
             : ''}"
           ${ref(this.offsetContext)}
         >
@@ -390,7 +395,7 @@ export class AmbachtModal extends AmbachtElement {
    */
   renderHeader() {
     return html`
-      <header class="ambacht-modal__panel-header ${this.defineHeaderClasses()}">
+      <header class="flexible-modal__panel-header ${this.defineHeaderClasses()}">
         <slot name="header"></slot>${this.renderClose()}
       </header>
     `;
@@ -401,7 +406,7 @@ export class AmbachtModal extends AmbachtElement {
    */
   renderContent() {
     return html`
-      <div class="ambacht-modal__panel-content" ${ref(this.panelContentContext)}>
+      <div class="flexible-modal__panel-content" ${ref(this.panelContentContext)}>
         ${this.data ? html`${this.data}` : html`<slot></slot>`}
       </div>
     `;
@@ -409,8 +414,8 @@ export class AmbachtModal extends AmbachtElement {
 
   renderClose() {
     return html`
-      <button class="ambacht-modal__close" @click="${this.handleClose}">
-        <span class="ambacht-modal__close-label">${this.closeLabel}</span>
+      <button class="flexible-modal__close" @click="${this.handleClose}">
+        <span class="flexible-modal__close-label">${this.closeLabel}</span>
       </button>
     `;
   }
@@ -421,11 +426,11 @@ export class AmbachtModal extends AmbachtElement {
   connectedCallback() {
     super.connectedCallback();
 
-    document.addEventListener('click', this.handleClick.bind(this));
-    document.addEventListener('keyup', this.handleKey.bind(this));
-    document.addEventListener('modal:open', this.handleHook.bind(this));
-    document.addEventListener('modal:update', this.handleHook.bind(this));
-    window.addEventListener('resize', this.handleResize.bind(this));
+    this.subscribeGlobalEvent('click', this.handleClick);
+    this.subscribeGlobalEvent('keyup', this.handleKey);
+    this.subscribeGlobalEvent('modal:open', this.handleHook);
+    this.subscribeGlobalEvent('modal:update', this.handleHook);
+    this.subscribeGlobalEvent('resize', this.handleResize, window);
   }
 
   /**
@@ -434,11 +439,11 @@ export class AmbachtModal extends AmbachtElement {
   disconnectedCallback() {
     super.disconnectedCallback();
 
-    document.removeEventListener('click', this.handleClick);
-    document.removeEventListener('keyup', this.handleKey);
-    document.removeEventListener('modal:open', this.handleHook);
-    document.removeEventListener('modal:update', this.handleHook);
-    window.removeEventListener('resize', this.handleResize);
+    this.unsubscribeGlobalEvent('click', this.handleClick);
+    this.unsubscribeGlobalEvent('keyup', this.handleKey);
+    this.unsubscribeGlobalEvent('modal:open', this.handleHook);
+    this.unsubscribeGlobalEvent('modal:update', this.handleHook);
+    this.unsubscribeGlobalEvent('resize', this.handleResize);
 
     if (this.wrapperContext && this.wrapperContext.value) {
       this.wrapperContext.value.removeEventListener('scroll', this.handleWrapperScroll);
@@ -455,9 +460,9 @@ export class AmbachtModal extends AmbachtElement {
    */
   updated() {
     if (this.isExpanded) {
-      super.lockFocus();
+      this.lockFocus();
     } else {
-      super.unlockFocus();
+      this.unlockFocus();
 
       if (this.wrapperContext && this.wrapperContext.value) {
         this.wrapperContext.value.scrollTop = 0;
@@ -466,4 +471,4 @@ export class AmbachtModal extends AmbachtElement {
   }
 }
 
-customElements.define('ambacht-modal', AmbachtModal);
+customElements.define('flexible-modal', FlexibleModal);

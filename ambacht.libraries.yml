@@ -25,8 +25,8 @@ variable-heading:
   dependencies:
     - ambacht/core
 
-modal:
+flexible-modal:
   js:
-    dist/components/Modal/ambacht.modal.js: { attributes: { type: 'module' } }
+    dist/components/FlexibleModal/ambacht.flexible-modal.js: { attributes: { type: 'module' } }
   dependencies:
     - ambacht/core

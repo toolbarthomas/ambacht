@@ -1,0 +1,3 @@
+@use "sass:math";
+
+$max-width--compact: math.div(120rem, 3);

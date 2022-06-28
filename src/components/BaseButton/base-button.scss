@@ -19,11 +19,6 @@ $iconSize: 1rem;
 .base-button {
   $root: &;
 
-  &,
-  & * {
-    box-sizing: border-box;
-  }
-
   position: relative;
   appearance: none;
   display: inline-block;

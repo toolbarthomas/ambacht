@@ -1,6 +1,15 @@
 {{ attach_library('ambacht/global-search') }}
 
 <script>
+
+  window.onError = (exception) => {
+    console.log(exception)
+  };
+
+  window.onRender = (context) => {
+    console.log(context, 'render')
+  };
+
   window.onSelect = (value, callback) => {
     console.log(value);
   }
@@ -30,7 +39,7 @@
       }).filter(e => e)
 
       callback({
-        results,
+        results: Math.floor(Math.random() * 10 ) > 3 ? [] : results
       });
 
     }).finally(() => {
@@ -41,8 +50,10 @@
 
 <global-search
   placeholder="{{ placeholder }}"
-  spriteSource="{{ spriteSource }}"
-  onSearch="onSearch"
-  onSelect="onSelect"
+  spritesource="{{ spriteSource }}"
+  onerror="onError"
+  onsearch="onSearch"
+  onselect="onSelect"
+  onrender="onRender"
   icon="{{ icon }}
 "></global-search>
