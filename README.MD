@@ -70,64 +70,68 @@ The default component reference that should be assigned to the top parent elemen
 
 ## Public Methods
 
-####firstUpdated()
+##### firstUpdated()
 
 Implements the core Ambacht dependencies like [Focus Trap](https://www.npmjs.com/package/focus-trap) for the defined component.
 
-####updated
+##### updated
 
 Ensures the `currentElement` value is updated if the component has been (de)selected and that the `Ambacht` global is updated afterwards.
 
-####lockFocus
+##### lockFocus
 
 Enables the defined [Focus Trap](https://www.npmjs.com/package/focus-trap) within the current component.
 
-####unlockFocus
+##### unlockFocus
 
 Disables the defined [Focus Trap](https://www.npmjs.com/package/focus-trap) within the current component.
 
-####log(`message: String` `type: Console.type`)
+##### log(`message: String` `type: Console.type`)
+
 Alias function that uses the default Console object from the Browser.
 
-####subscribeGlobalEvent(`type: Event.type` `handler: Function`)
+##### subscribeGlobalEvent(`type: Event.type` `handler: Function`)
+
 Subscribes a new Document Event listener to the globalEvents private property.
 
-####unsubscribeGlobalEvent(`type: Event.type` `handler: Function`)
+##### unsubscribeGlobalEvent(`type: Event.type` `handler: Function`)
+
 Removes the subscribed Document Event listener from the globalEvents private property.
 
 ## Private Methods
 
 These methods are Private and should only be used within the component instance. Private methods are prefixed with an underscore.
 
-####\_attributeNameForProperty(`name: string`)
+##### \_attributeNameForProperty(`name: string`)
 
 Ensures the given string is formatted as snake cased value to ensure the compatibility for HTML attributes.
 
-####\_documentClickFunction(`event: PointerEvent`)
+##### \_documentClickFunction(`event: PointerEvent`)
 
 Implements a click Event handler for the current component. It will mark the component as `currentElement` within the Ambacht global.
 
-####\_documentKeyDownFunction(`event: KeyboardEvent`)
+##### \_documentKeyDownFunction(`event: KeyboardEvent`)
+
 Implements a keydown handler for the created Ambacht component to remove the component as `currentElement`.
 
-####\_documentFocusFunction(`event: FocusEvent`)
+##### \_documentFocusFunction(`event: FocusEvent`)
 
 Catches the focus Event within the component to mark it as `currentElement`.
 
-####\_filterDocumentEvent(`type: Event.type` `handler: Function`)
+##### \_filterDocumentEvent(`type: Event.type` `handler: Function`)
 
 Check if the defined Function handler has been defined to the `documentEvents`
 property.
 
-####\_handleEvent(`event: Event` `context: Element` `handler: Function|String`)
+##### \_handleEvent(`event: Event` `context: Element` `handler: Function|String`)
 
 Helper function to initiate the passed handler. It can initiate the function directly or an Event will be dispatched within the given context.
 
-####\_handleCurrentElement(`event: Event`)
+##### \_handleCurrentElement(`event: Event`)
 
 Marks the defined context as `currentElement` this function is also used within the `_global` Event functions like `_globalKeyDownFunction`.
 
-####\_update(`property: String` `handler: any`)
+##### \_update(`property: String` `handler: any`)
 
 Wrapper function that will call `LitElement.requestUpdate` method within a Catch block. A function scope can be included instead to preform tasks before the requestUpdate is called.
 
@@ -145,7 +149,7 @@ this._update('title', () => {
 });
 ```
 
-####\_strip(`value: String`)
+##### \_strip(`value: String`)
 
 Ensure any whitespace characters are removed from the defined string.
 
@@ -153,7 +157,7 @@ Ensure any whitespace characters are removed from the defined string.
 this._strip('Foo \n Bar'); // Expected value: FooBar
 ```
 
-####\_fn(`handler: Function|String`)
+##### \_fn(`handler: Function|String`)
 
 Implements support for Function handlers defined from the Window scope or Function Handlers within the component scope.
 
@@ -165,7 +169,7 @@ this._fn('onRender'); // Calls the function from the global scope (this should b
 this._fn(this.OnRender); // Calls the function from the Component scope.
 ```
 
-####\_renderImage(`name: String` `classname: String`)
+##### \_renderImage(`name: String` `classname: String`)
 
 Renders the supported images defined within `AmbachtElement.supportedImageExtensions` as inline or external element. An inline SVG element will be used if `this.spriteSource` is defined for the initial component.
 
@@ -190,21 +194,23 @@ this.spriteSource = 'sprite.svg';
 this._renderImage('example', 'svg-icon'); // -> sprite.svg#example
 ```
 
-####\_testImageSource(`source: String`)
+##### \_testImageSource(`source: String`)
 
 Test if the defined `source` parameter matches with the expected `supportedImageExtensions` values. This is internally used within the `_renderImage` method to defined the correct image element.
 
-####\_testImage(`initial: Boolean` `context: String`)
+##### \_testImage(`initial: Boolean` `context: String`)
 
 Tests if the defined source is a valid image extension that exists within the defined `supportedImageExtensions` property. The defined path parameter will also be escaped to ensure no white space is present for the source parameter.
 
-####\_throttle(`handler: Function`)
+##### \_throttle(`handler: Function`)
 
 Throttles the given Function handler to ensure it is only called once and respects the default refresh rate of the component. The actual delay can be adjusted by defined the `throttle` property to the component. By default it will throttle at 60 FPS.
 
-####\_isComponentContext(element: Element)
+##### \_isComponentContext(element: Element)
+
 Checks if the given Element exists within the Shadow Dom and Regular Dom within the current Component.
 
-####\_context()
+##### \_context()
+
 Should return the main context for the current component this will be the actual
 Shadow Dom if there is no parent reference defined for the current component.
