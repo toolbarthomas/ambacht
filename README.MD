@@ -24,44 +24,47 @@ development process.
 
 Ambacht Element includes some additional properties & dependencies for the initial component. These properties are required for the additional private & public methods.
 
-####this&#46;name
+##### this&#46;name
+
 Defines a custom name for the constructed component, the constructor name will be used as fallback.
 
-####this&#46;preventEvent
+##### this&#46;preventEvent
+
 A global flag that should block incomming Events within the constructed component. It should be used if you want to ensure Event stack from happening.
 
-####this&#46;spriteSource
+##### this&#46;spriteSource
+
 Enables the usage of inline SVG Sprite elements if the `spriteSource` is defined for the initial component. A sprite element will be rendered if within the `_renderImage` method when this property is defined.
 
-####this&#46;disableFocusTrap
+##### this&#46;disableFocusTrap
 
 Prevents the creation of a new [Focus Trap](https://www.npmjs.com/package/focus-trap) instance for the defined component. The Focus Trap related helpers will do anything when this property is defined.
 
-####this&#46;throttleHandler
+##### this&#46;throttleHandler
 
 Stores the handler that was defined from `this._throttle` method to ensure it is only called once.
 
-####this&#46;throttle
+##### this&#46;throttle
 
 Defines the throttle timeout in miliseconds for the constructed Ambacht component. It will default to 60 FPS in miliseconds.
 
-####this&#46;ignoredKeyCodes
+##### this&#46;ignoredKeyCodes
 
 Defines the keyCode values that should be ignored during a Keyboard Event. It should ignore the functional keyCodes like `shift` `return` `tab` etc.
 
-####this&#46;exitKeyCodes
+##### this&#46;exitKeyCodes
 
 Defines the keyCode values that should exit out of the current function scope from the component. This can be used to reset the component state like collapsing the element after the `escape` key is pressed.
 
-####this&#46;supportedImageExtensions
+##### this&#46;supportedImageExtensions
 
 Defines the list of accepted image extensions that is used within the `_renderImage` `_testImageSource` & `_testImage` methods.
 
-####this&#46;root
+##### this&#46;root
 
 Should match with the global scope of the JS context. This should be the Window object. The `Ambacht` global will be implemented within the given `root` context that is also used to mark the `currentElement`.
 
-####this&#46;context
+##### this&#46;context
 
 The default component reference that should be assigned to the top parent element within the `render` method.
 
