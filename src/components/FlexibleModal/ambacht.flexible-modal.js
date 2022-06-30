@@ -193,6 +193,8 @@ export class FlexibleModal extends AmbachtElement {
 
     const ariaTarget = document.querySelector(ariaControls);
 
+    this.hook('click');
+
     if (ariaTarget !== this || !this.contains(ariaTarget)) {
       this.handleClose(event);
     } else if (ariaTarget === this || this.contains(ariaTarget)) {
@@ -212,6 +214,8 @@ export class FlexibleModal extends AmbachtElement {
     }
 
     this.commit('isExpanded', () => (this.isExpanded = false));
+
+    this.hook('close');
   }
 
   /**
@@ -280,11 +284,9 @@ export class FlexibleModal extends AmbachtElement {
       return;
     }
 
-    this.hook('open');
-
     this.commit('isExpanded', true);
 
-    // this.dispatchEvent(new CustomEvent('open'));
+    this.hook('open');
   }
 
   /**
@@ -297,6 +299,7 @@ export class FlexibleModal extends AmbachtElement {
     this.throttle(() => {
       this.handleWrapperScroll();
       this.handlePanelContentScroll();
+      this.hook('resize');
     });
   }
 
@@ -327,6 +330,8 @@ export class FlexibleModal extends AmbachtElement {
       );
 
       this.commit('contextClassnames', this.defineContextClassnames());
+
+      this.hook('shake');
     });
   }
 
@@ -344,6 +349,8 @@ export class FlexibleModal extends AmbachtElement {
     const { data } = event.detail;
 
     this.commit('data', () => (this.data = data && data.length ? data : null));
+
+    this.hook('update-content');
   }
 
   /**
@@ -363,6 +370,8 @@ export class FlexibleModal extends AmbachtElement {
     this.title = title;
 
     this.commit('_header', this.renderHeader());
+
+    this.hook('update-title');
   }
 
   /**
@@ -432,6 +441,8 @@ export class FlexibleModal extends AmbachtElement {
           this.isSticky = false;
         }
       });
+
+      this.hook('scroll');
     });
   }
 
@@ -540,6 +551,8 @@ export class FlexibleModal extends AmbachtElement {
     this.subscribeGlobalEvent('flexible-modal:update-title', this.handleHook);
     this.subscribeGlobalEvent('keyup', this.handleKey);
     this.subscribeGlobalEvent('resize', this.handleResize, window);
+
+    this.hook('connected');
   }
 
   /**
@@ -565,6 +578,8 @@ export class FlexibleModal extends AmbachtElement {
     if (this.panelContentContext && this.panelContentContext.value) {
       this.panelContentContext.value.removeEventListener('scroll', this.handlePanelContentScroll);
     }
+
+    this.hook('disconnected');
   }
 
   /**
@@ -582,6 +597,8 @@ export class FlexibleModal extends AmbachtElement {
     }
 
     super.updated();
+
+    this.hook('updated');
   }
 }
 

@@ -1,11 +1,5 @@
 {{ attach_library('ambacht/flexible-modal') }}
 
-<script>
-  window.onBeforeOpen = (event, context) => {
-    console.log('onOpen', event, context);
-  };
-</script>
-
 {% for item in items %}
   <flexible-modal id="{{ item.id|default('modal') }}" title="{{ item.title }}"
     {{ item.isFullscreen ? 'isFullscreen' }}
@@ -19,8 +13,29 @@
     </div>
   </flexible-modal>
 
+  <script>
+    if (document.getElementById('{{ item.id}}')) {
+      document.getElementById('{{ item.id}}').addEventListener('open', (event) => {
+        console.log(this, event.type)
+      });
+
+      document.getElementById('{{ item.id}}').addEventListener('close', (event) => {
+        console.log(this, event.type)
+      });
+
+      document.getElementById('{{ item.id}}').addEventListener('shake', (event) => {
+        console.log(this, event.type)
+      });
+
+      document.getElementById('{{ item.id}}').addEventListener('update-title', (event) => {
+        console.log(this, event.type)
+      });
+
+      document.getElementById('{{ item.id}}').addEventListener('update-content', (event) => {
+        console.log(this, event.type)
+      });
+    }
+  </script>
+
   <button class="button" aria-controls="{{ item.id }}" onClick="document.dispatchEvent(new CustomEvent('flexible-modal:open', { detail: { target: document.getElementById('{{item.id}}') } } ))">Open {{ item.title }}</button>
 {% endfor  %}
-
-
-<button class="button" onClick="document.dispatchEvent(new CustomEvent('flexible-modal:update-content', { detail: { target: document.getElementById('{{items[0].id}}'), data: '' } } ))">Cleanup as dispatchEvent</button>

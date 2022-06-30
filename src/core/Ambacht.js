@@ -392,7 +392,7 @@ export class AmbachtElement extends LitElement {
       return;
     }
 
-    const e = new CustomEvent(name);
+    const e = new CustomEvent(name, { bubbles: true });
 
     if (context && context !== this) {
       return context.dispatchEvent(e);
