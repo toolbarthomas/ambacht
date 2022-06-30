@@ -1,4 +1,15 @@
 {
-  "title": "Example modal",
-  "content": "<button>Focus</button><p>Ad anim est culpa nostrud nisi irure sunt duis sint quis ipsum voluptate. Amet consequat officia laboris aliqua non nulla proident irure. Lorem eiusmod consectetur sit culpa irure nulla tempor veniam exercitation cupidatat velit irure. Ex laborum ad consectetur excepteur ut mollit sint esse deserunt occaecat. Enim mollit deserunt laboris reprehenderit aliquip exercitation in pariatur velit. Officia officia amet sint minim aute sit.</p><p>Ad anim est culpa nostrud nisi irure sunt duis sint quis ipsum voluptate. Amet consequat officia laboris aliqua non nulla proident irure. Lorem eiusmod consectetur sit culpa irure nulla tempor veniam exercitation cupidatat velit irure. Ex laborum ad consectetur excepteur ut mollit sint esse deserunt occaecat. Enim mollit deserunt laboris reprehenderit aliquip exercitation in pariatur velit. Officia officia amet sint minim aute sit.</p>"
+  "items": [
+    {
+      "id": "modal1",
+      "title": "Default Modal",
+      "content": "<button>Focus</button><p>Ad anim est culpa nostrud nisi irure sunt duis sint quis ipsum voluptate. Amet consequat officia laboris aliqua non nulla proident irure. Lorem eiusmod consectetur sit culpa irure nulla tempor veniam exercitation cupidatat velit irure. Ex laborum ad consectetur excepteur ut mollit sint esse deserunt occaecat. Enim mollit deserunt laboris reprehenderit aliquip exercitation in pariatur velit. Officia officia amet sint minim aute sit.</p><p>Ad anim est culpa nostrud nisi irure sunt duis sint quis ipsum voluptate. Amet consequat officia laboris aliqua non nulla proident irure. Lorem eiusmod consectetur sit culpa irure nulla tempor veniam exercitation cupidatat velit irure. Ex laborum ad consectetur excepteur ut mollit sint esse deserunt occaecat. Enim mollit deserunt laboris reprehenderit aliquip exercitation in pariatur velit. Officia officia amet sint minim aute sit.</p>"
+    },
+    {
+      "id": "modal2",
+      "title": "Fullscreen Modal",
+      "content": "<p>Dolore et ut quis ex dolor occaecat proident ullamco mollit ex. Irure est irure qui ad consequat incididunt pariatur. Excepteur adipisicing exercitation cillum laboris magna ipsum duis. Adipisicing qui sint labore nisi dolor et nostrud cillum. Sint velit officia aliqua labore consequat.</p>",
+      "isFullscreen": true
+    }
+  ]
 }

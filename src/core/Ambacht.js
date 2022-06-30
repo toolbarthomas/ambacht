@@ -22,7 +22,7 @@ export class AmbachtElement extends LitElement {
   constructor(props) {
     super();
 
-    const { name, throttle, disableFocusTrap } = props || {};
+    const { name, throttleDelay, disableFocusTrap } = props || {};
 
     // Should define the base classname for the Custom Element.
     this.name = name || this.constructor.name;
@@ -38,10 +38,12 @@ export class AmbachtElement extends LitElement {
     this.disableFocusTrap = disableFocusTrap || false;
     this.hasFocusTrap = false;
 
+    this.FPS = 1000 / 60;
+
     // Stores the timeout handler for the current instance to prevent
     // function handlers are not used multiple times.
     this.throttleHandler;
-    this.throttleDelay = isNaN(parseFloat(throttle)) ? 1000 / 60 : throttle;
+    this.throttleDelay = isNaN(parseFloat(throttleDelay)) ? this.FPS : throttleDelay;
 
     // Contains the keycodes that should be ignored during a Keyboard Event.
     this.ignoredKeyCodes = [9, 16, 17, 18, 20];
@@ -72,6 +74,15 @@ export class AmbachtElement extends LitElement {
     if (!this.disableFocusTrap) {
       this.focusContext = createRef();
     }
+
+    // Stores the defined slots within the instance.
+    this.slots = {};
+    this.defaultSlotName = '_content';
+
+    // Stores the context element and modifier classnames for the parent
+    // container.
+    this.elementClassnames = [];
+    this.modifierClassnames = [];
 
     // Constructs the global Ambacht context to enable communication within the
     // window context.
@@ -113,11 +124,16 @@ export class AmbachtElement extends LitElement {
 
   /**
    * Ensures the given string is formatted as correct HTML attribute.
+   *
+   * This is needed since some frameworks cannot parse camel cased properties.
+   * You should use `oncallback` instead of `onCallback` when it is asigned to
+   * the element for those frameworks.
+   *
    * @param {String} name
-   * @param {} options
-   * @returns
+   *
+   * @return {String} The adjusted property.
    */
-  static _attributeNameForProperty(name, options) {
+  static _attributeNameForProperty(name) {
     return super._attributeNameForProperty(
       name.replace(/([a-zA-Z])(?=[A-Z])/g, '$1-').toLowerCase(),
       {}
@@ -129,21 +145,6 @@ export class AmbachtElement extends LitElement {
    */
   _context() {
     return this.context && this.context.value ? this.context.value : this;
-  }
-
-  /**
-   * Implements function handling from the window scope that are outside a
-   * Framework scope.
-   *
-   * @param {Function|String} handler Handles the function directly or call the
-   * assigned function from the window context.
-   */
-  _fn(handler) {
-    if (typeof handler === 'function') {
-      return handler;
-    } else if (typeof this.root[handler] === 'function') {
-      return this.root[handler];
-    }
   }
 
   /**
@@ -172,12 +173,39 @@ export class AmbachtElement extends LitElement {
    */
   _documentKeyDownFunction({ keyCode, target }) {
     if (keyCode === 27) {
-      this._update('currentElement', false);
+      this.commit('currentElement', false);
 
       if (target === this || this.contains(target)) {
         target.blur();
       }
     }
+  }
+
+  /**
+   * Check if the defined function handler has been defined.
+   *
+   * @param {Event.tyoe} type The Event type that will be matched.
+   * @param {Function} handler The Function handler that will be matched.
+   *
+   * @returns {Boolean|null} Should return the matched subscription.
+   */
+  _filterDocumentEvent(type, handler) {
+    if (!this.globalEvents.length) {
+      return;
+    }
+
+    const entry = [];
+    this.globalEvents.forEach(([t, h, ctx], i) => {
+      if (t === type && h.name === handler.name) {
+        entry.push([t, h, ctx, i]);
+      }
+    });
+
+    if (!entry.length) {
+      return;
+    }
+
+    return entry[0];
   }
 
   /**
@@ -188,104 +216,13 @@ export class AmbachtElement extends LitElement {
    * context exists within the scope of the element instance.
    */
   _handleCurrentElement(context) {
-    this._update('currentElement', () => {
-      if (this._isComponentContext(context)) {
+    this.commit('currentElement', () => {
+      if (this.isComponentContext(context)) {
         this.currentElement = true;
       } else {
         this.currentElement = false;
       }
     });
-  }
-
-  /**
-   * Event Wrapper that should implement the inherited event handler as a
-   * property;
-   *
-   * @param {Event} event The inherited event from the dispatched Event.
-   * @param {Element} context Triggers the defined Event to the selected
-   * Element.
-   * @param {Function|String} handler Optional callback handler to run after
-   * the Event has been fired.
-   * Should dispatch the handler as a new if the defined handler is a string.
-   */
-  _handleEvent(event, context, handler) {
-    if (!handler) {
-      return;
-    }
-
-    // Catch the initial click event and invoke any additional properties
-    // for the custom element.
-    if (event && event.stopImmediatePropagation) {
-      event.stopImmediatePropagation();
-    }
-
-    // Prevents any interaction during a request or if the element is disabled.
-    if (this.preventEvent) {
-      return;
-    }
-
-    // Use the defined handler as function otherwise invoke the original
-    // Event Handler.
-    try {
-      if (typeof handler === 'function') {
-        return handler(event, context);
-      } else {
-        if (event.target && event.target !== this) {
-          event.target.dispatchEvent(new Event(handler || event.type));
-        } else if (context !== this) {
-          context.dispatchEvent(new Event(handler || event.type));
-        } else {
-          this.dispatchEvent(new Event(handler || event.type));
-        }
-      }
-    } catch (exception) {
-      this.log(exception, 'error');
-    }
-  }
-
-  /**
-   * Helper function that will check if the element exists within the referenced
-   * context.
-   *
-   * @param {HTMLElement} element The element to check within the context.
-   */
-
-  _isComponentContext(element) {
-    const { value } = this.context || {};
-
-    return (
-      element === value ||
-      element === this ||
-      (value && value.contains(element)) ||
-      this.contains(element)
-    );
-  }
-
-  /**
-   * Helper function that updates an Element property that is defined within the
-   * define function handler. A requestUpdate will be fired afterwards.
-   *
-   * @param {String} property The property to update
-   * @param {Function} handler The function that should update the property.
-   */
-  _update(property, handler) {
-    if (!property) {
-      return;
-    }
-
-    try {
-      const value = this[property];
-      if (typeof handler === 'function') {
-        handler();
-      } else {
-        this[property] = handler;
-      }
-
-      // Ensure the updated property is recognized by Lit.
-      this.requestUpdate(property, value);
-    } catch (exception) {
-      console.error(exception);
-    }
   }
 
   /**
@@ -300,31 +237,6 @@ export class AmbachtElement extends LitElement {
           .join('')
           .replace(/\r?\n|\r/g, '')
       : null;
-  }
-
-  /**
-   * Renders the actual icon as inline or external icon. And inline SVG element
-   * will be used when the iconName property is defined.
-   * @param {String} name Defines the image source or sprite name from the given
-   * parameter.
-   * @param {String} classname Includes the optional classname to the image
-   * element.
-   */
-  _renderImage(name, classname) {
-    return this._testImage(false, name)
-      ? html`
-          <svg class="${classname || ''}" aria-hidden="true" focusable="false">
-            <use xlink:href="${this.spriteSource}#${name}"></use>
-          </svg>
-        `
-      : html`
-          <img
-            class="${classname || ''}"
-            aria-hidden="true"
-            focusable="false"
-            src="${this._testImageSource(name) ? name : this.spriteSource}"
-          />
-        `;
   }
 
   /**
@@ -392,22 +304,6 @@ export class AmbachtElement extends LitElement {
   }
 
   /**
-   * Throttles the defined handler to prevent multiple handlers from being
-   * fired.
-   *
-   * @param {Function} handler The function handler that should be throttled.
-   * @param {Number} timeout Optional timeout that will be used instead of
-   * this.throttleDelay.
-   */
-  _throttle(handler, timeout) {
-    if (this.throttleHandler) {
-      clearTimeout(this.throttleHandler);
-    }
-
-    this.throttleHandler = setTimeout(handler, timeout != null ? timeout : this.throttleDelay);
-  }
-
-  /**
    * Assigns the global Event listeners to include property helper within the
    * custom element.
    */
@@ -431,30 +327,165 @@ export class AmbachtElement extends LitElement {
   }
 
   /**
-   * Check if the defined function handler has been defined.
-   *
-   * @param {Event.tyoe} type The Event type that will be matched.
-   * @param {Function} handler The Function handler that will be matched.
-   *
-   * @returns {Boolean|null} Should return the matched subscription.
+   * Implements the mandatory cleanup tasks for the defined component.
    */
-  _filterDocumentEvent(type, handler) {
-    if (!this.globalEvents.length) {
+  disconnectedCallback() {
+    try {
+      this.unsubscribeGlobalEvent('click', this._documentClickFunction);
+      this.unsubscribeGlobalEvent('keydown', this._documentKeyDownFunction);
+      this.unsubscribeGlobalEvent('focus', this._documentFocusFunction);
+
+      if (this.throttleHandler) {
+        clearTimeout(this.throttleHandler);
+      }
+
+      super.disconnectedCallback();
+    } catch (exception) {
+      this.log(exception, 'error');
+    }
+  }
+
+  defineClassnames() {
+    if (!this.elementClassnames || !this.elementClassnames) {
       return;
     }
+  }
 
-    const entry = [];
-    this.globalEvents.forEach(([t, h, ctx], i) => {
-      if (t === type && h.name === handler.name) {
-        entry.push([t, h, ctx, i]);
+  /**
+   * Implements the required component dependencies within a Promise so child
+   * components can await for the initial setup of Ambacht.
+   */
+  firstUpdated() {
+    this.testSlots();
+
+    return new Promise((resolve) => {
+      if (!this.focusTrap && this.focusContext && this.focusContext.value) {
+        this.throttle(() => {
+          this.focusTrap = focusTrap.createFocusTrap([this, this.focusContext.value], {
+            escapeDeactivates: false, // The child component should deactivate it manually.
+            allowOutsideClick: false,
+            initialFocus: false,
+            tabbableOptions: {
+              getShadowRoot: (elements) => {
+                if (this.isComponentContext(elements)) {
+                  return elements;
+                }
+              },
+            },
+          });
+
+          this.log(`Focus Trap instance created for ${this.name}`);
+
+          resolve();
+        }, this.FPS);
       }
     });
+  }
 
-    if (!entry.length) {
+  /**
+   * Alias function to call framework functions.
+   *
+   * @param {String} name The name of the assigned Event e.g. @name
+   */
+  hook(name, context) {
+    if (!name) {
       return;
     }
 
-    return entry[0];
+    const e = new CustomEvent(name);
+
+    if (context && context !== this) {
+      return context.dispatchEvent(e);
+    }
+
+    return this.dispatchEvent(e);
+  }
+
+  /**
+   * Helper function that will check if the element exists within the referenced
+   * context.
+   *
+   * @param {HTMLElement} element The element to check within the context.
+   */
+  isComponentContext(element) {
+    const { value } = this.context || {};
+
+    return (
+      element === value ||
+      element === this ||
+      (value && value.contains(element)) ||
+      this.contains(element)
+    );
+  }
+
+  /**
+   * Alias function to activate the created § Trap instance.
+   */
+  lockFocus() {
+    if (!this.focusTrap) {
+      return;
+    }
+
+    if (
+      !this.hasFocusTrap &&
+      this.focusTrap.activate &&
+      this.focusContext &&
+      this.focusContext.value
+    ) {
+      try {
+        this.throttle(() => {
+          this.log(`Focus locked within: ${this.name}`);
+          this.focusTrap.activate();
+          this.commit('hasFocusTrap', true);
+        }, this.FPS);
+      } catch (exception) {
+        this.log(exception, 'error');
+      }
+    }
+  }
+
+  /**
+   * Alias function for the console method.
+   *
+   * @param {String} message The message to output.
+   * @param {Console} type Should use an existing console method
+   */
+  log(message, type) {
+    if (typeof console[type || 'log'] === 'function') {
+      let output = message;
+      if (!Array.isArray(output)) {
+        output = [output];
+      }
+
+      if (this.root && this.root.Ambacht && this.root.Ambacht.verbose) {
+        output.forEach((m) => console[type || 'log'](m));
+      }
+    }
+  }
+
+  /**
+   * Renders the actual icon as inline or external icon. And inline SVG element
+   * will be used when the iconName property is defined.
+   * @param {String} name Defines the image source or sprite name from the given
+   * parameter.
+   * @param {String} classname Includes the optional classname to the image
+   * element.
+   */
+  renderImage(name, classname) {
+    return this._testImage(false, name)
+      ? html`
+          <svg class="${classname || ''}" aria-hidden="true" focusable="false">
+            <use xlink:href="${this.spriteSource}#${name}"></use>
+          </svg>
+        `
+      : html`
+          <img
+            class="${classname || ''}"
+            aria-hidden="true"
+            focusable="false"
+            src="${this._testImageSource(name) ? name : this.spriteSource}"
+          />
+        `;
   }
 
   /**
@@ -500,6 +531,50 @@ export class AmbachtElement extends LitElement {
   }
 
   /**
+   * Tests the defined slots within the created component.
+   */
+  testSlots(name) {
+    const slots = this.shadowRoot.querySelectorAll('slot');
+
+    this.commit('slots', () => {
+      if (!slots.length) {
+        this.slots = {};
+      } else {
+        for (let i = 0; i < slots.length; i += 1) {
+          const name = slots[i].name || this.defaultSlotName;
+
+          this.slots[name] = slots[i].assignedNodes().length ? true : false;
+        }
+      }
+    });
+  }
+
+  /**
+   * Throttles the defined handler to prevent multiple handlers from being
+   * fired.
+   *
+   * @param {Function} handler The function handler that should be throttled.
+   * @param {Number} timeout Optional timeout that will be used instead of
+   * this.throttleDelay.
+   */
+  throttle(handler, timeout) {
+    if (this.throttleHandler) {
+      clearTimeout(this.throttleHandler);
+    }
+
+    // Wrap the initial handler so it can be optional wrapped in a
+    // requestAnimationFrame.
+    const fn = () =>
+      (this.throttleHandler = setTimeout(handler, timeout != null ? timeout : this.throttleDelay));
+
+    if (this.root) {
+      this.root.requestAnimationFrame(fn);
+    } else {
+      fn();
+    }
+  }
+
+  /**
    * Removes a subscribe Document Event for this component.
    *
    * @param {Event.Type} type The Event type that was assigned as Document Event.
@@ -542,92 +617,6 @@ export class AmbachtElement extends LitElement {
   }
 
   /**
-   * Implements the mandatory cleanup tasks for the defined component.
-   */
-  disconnectedCallback() {
-    try {
-      this.unsubscribeGlobalEvent('click', this._documentClickFunction);
-      this.unsubscribeGlobalEvent('keydown', this._documentKeyDownFunction);
-      this.unsubscribeGlobalEvent('focus', this._documentFocusFunction);
-
-      if (this.throttleHandler) {
-        clearTimeout(this.throttleHandler);
-      }
-
-      super.disconnectedCallback();
-    } catch (exception) {
-      this.log(exception, 'error');
-    }
-  }
-
-  /**
-   * Implements the required component dependencies like Focus Trap.
-   */
-  firstUpdated() {
-    if (!this.focusTrap && this.focusContext && this.focusContext.value) {
-      this._throttle(() => {
-        this.focusTrap = focusTrap.createFocusTrap([this, this.focusContext.value], {
-          escapeDeactivates: true,
-          allowOutsideClick: true,
-          tabbableOptions: {
-            getShadowRoot: (elements) => {
-              if (this._isComponentContext(elements)) {
-                return elements;
-              }
-            },
-          },
-        });
-        this.log(`Focus Trap instance created for ${this.name}`);
-      });
-    }
-  }
-
-  /**
-   * Alias function to activate the created § Trap instance.
-   */
-  lockFocus() {
-    if (!this.focusTrap) {
-      return;
-    }
-
-    if (
-      !this.hasFocusTrap &&
-      this.focusTrap.activate &&
-      this.focusContext &&
-      this.focusContext.value
-    ) {
-      try {
-        this._throttle(() => {
-          this.log(`Focus locked within: ${this.name}`);
-          this.focusTrap.activate();
-          this._update('hasFocusTrap', true);
-        });
-      } catch (exception) {
-        this.log(exception, 'error');
-      }
-    }
-  }
-
-  /**
-   * Alias function for the console method.
-   *
-   * @param {String} message The message to output.
-   * @param {Console} type Should use an existing console method
-   */
-  log(message, type) {
-    if (typeof console[type || 'log'] === 'function') {
-      let output = message;
-      if (!Array.isArray(output)) {
-        output = [output];
-      }
-
-      if (this.root && this.root.Ambacht && this.root.Ambacht.verbose) {
-        output.forEach((m) => console[type || 'log'](m));
-      }
-    }
-  }
-
-  /**
    * Alias function to deactivate the created Focus Trap instance.
    */
   unlockFocus() {
@@ -644,10 +633,37 @@ export class AmbachtElement extends LitElement {
       try {
         this.log(`Focus locked within: ${this.name}`);
         this.focusTrap.deactivate();
-        this._update('hasFocusTrap', false);
+        this.commit('hasFocusTrap', false);
       } catch (exception) {
         this.log(exception, 'error');
       }
+    }
+  }
+
+  /**
+   * Helper function that updates an Element property that is defined within the
+   * define function handler. A requestUpdate will be fired afterwards.
+   *
+   * @param {String} property The property to update
+   * @param {Function} handler The function that should update the property.
+   */
+  commit(property, handler) {
+    if (!property) {
+      return;
+    }
+
+    try {
+      const value = this[property];
+      if (typeof handler === 'function') {
+        handler();
+      } else {
+        this[property] = handler;
+      }
+
+      // Ensure the updated property is recognized by Lit.
+      this.requestUpdate(property, value);
+    } catch (exception) {
+      console.error(exception);
     }
   }
 

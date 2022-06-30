@@ -217,7 +217,7 @@ export class GlobalSearch extends AmbachtElement {
   _handleInputChange(event, enforce) {
     this.preventEvent = true;
 
-    this._update('value', () => {
+    this.update('value', () => {
       if (this.inputElement && this.inputElement.value) {
         this.value = this.inputElement.value.value;
       }
@@ -231,10 +231,10 @@ export class GlobalSearch extends AmbachtElement {
           const { results } = props;
 
           this.preventEvent = false;
-          this._updateResults(results);
+          this.updateResults(results);
         });
       } else {
-        this._updateResults(null);
+        this.updateResults(null);
       }
     }
 
@@ -253,10 +253,10 @@ export class GlobalSearch extends AmbachtElement {
       return;
     }
 
-    this._throttle(() => {
+    this.throttle(() => {
       this._handleEvent(event, this.inputElement.value, 'change');
 
-      this._update('cachedValue', () => {
+      this.update('cachedValue', () => {
         this.cachedValue = target.value;
       });
     });
@@ -493,11 +493,11 @@ export class GlobalSearch extends AmbachtElement {
    * Assigns the pending state properties to the defined custom Element.
    */
   enablePending() {
-    this._update('pending', () => {
+    this.update('pending', () => {
       this.pending = true;
     });
 
-    this._update('disabled', () => {
+    this.update('disabled', () => {
       this.disabled = true;
     });
   }
@@ -506,11 +506,11 @@ export class GlobalSearch extends AmbachtElement {
    * Removes the pending state from the defined custom element.
    */
   disablePending() {
-    this._update('pending', () => {
+    this.update('pending', () => {
       this.pending = false;
     });
 
-    this._update('disabled', () => {
+    this.update('disabled', () => {
       this.disabled = false;
     });
   }

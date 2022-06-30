@@ -1,0 +1,11 @@
+/**
+ * Sass utility mixin with that generate the focus ring for focus & focus-within
+ * selectors.
+ */
+ @mixin focus-ring($color: currentColor) {
+    &:focus-visible,
+    &:focus {
+      outline: solid 0.125rem $color;
+      outline-offset: 0.125rem;
+    }
+ }

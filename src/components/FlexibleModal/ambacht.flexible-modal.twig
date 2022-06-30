@@ -1,18 +1,26 @@
 {{ attach_library('ambacht/flexible-modal') }}
 
 <script>
-  window.onOpen2 = (event, context) => {
+  window.onBeforeOpen = (event, context) => {
     console.log('onOpen', event, context);
   };
-
-  const onOpen = () => {
-    console.log('as const');
-  }
 </script>
 
-<flexible-modal id="{{ id|default('modal') }}" onOpen="onOpen" closeOnBackdropClick alignRight isFullscreen {{ attributes }}>{{ content }}</flexible-modal>
+{% for item in items %}
+  <flexible-modal id="{{ item.id|default('modal') }}" title="{{ item.title }}"
+    {{ item.isFullscreen ? 'isFullscreen' }}
+  >
+    {{ item.content }}
 
-<button class="button" aria-controls="{{ id|default('modal') }}" onClick="document.dispatchEvent(new CustomEvent('modal:open', { detail: { target: document.getElementById('{{id|default('modal')}}') } } ))">Open as dispatchEvent</button>
-<button class="button" onClick="document.dispatchEvent(new CustomEvent('modal:update', { detail: { target: document.getElementById('{{id|default('modal')}}'), data: 'lorem' } } ))">Update as dispatchEvent</button>
-<button class="button" onClick="document.dispatchEvent(new CustomEvent('modal:update', { detail: { target: document.getElementById('{{id|default('modal')}}'), data: '' } } ))">Cleanup as dispatchEvent</button>
-<button class="button" aria-controls="{{ id|default('modal') }}">Open as aria-controls</button>
+    <div slot="footer">
+      <button class="button" onClick="document.dispatchEvent(new CustomEvent('flexible-modal:close', { detail: { target: document.getElementById('{{item.id}}') } } ))">Cancel</button>
+      <button class="button" onClick="document.dispatchEvent(new CustomEvent('flexible-modal:update-title', { detail: { target: document.getElementById('{{item.id}}'), title: 'Updated title' } } ))">Update title</button>
+      <button class="button" onClick="document.dispatchEvent(new CustomEvent('flexible-modal:shake', { detail: { target: document.getElementById('{{item.id}}') } } ))">Shake</button>
+    </div>
+  </flexible-modal>
+
+  <button class="button" aria-controls="{{ item.id }}" onClick="document.dispatchEvent(new CustomEvent('flexible-modal:open', { detail: { target: document.getElementById('{{item.id}}') } } ))">Open {{ item.title }}</button>
+{% endfor  %}
+
+
+<button class="button" onClick="document.dispatchEvent(new CustomEvent('flexible-modal:update-content', { detail: { target: document.getElementById('{{items[0].id}}'), data: '' } } ))">Cleanup as dispatchEvent</button>

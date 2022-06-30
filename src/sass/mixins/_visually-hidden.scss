@@ -1,0 +1,11 @@
+@mixin visually-hidden() {
+  position: absolute !important;
+  clip: rect(0.0625rem, 0.0625rem, 0.0625rem, 0.0625rem);
+  overflow: hidden;
+  height: 0.0625rem;
+  width: 0.0625rem;
+  word-wrap: normal;
+  text-transform: initial;
+  margin-top: -0.0625rem; // Fixes the layout getting vertically shifted by 0.0625rem.
+  margin-left: -0.0625rem; // Fixes the layout getting horizontally shifted by 0.0625rem.
+}

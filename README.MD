@@ -204,7 +204,7 @@ Tests if the defined source is a valid image extension that exists within the de
 
 ##### \_throttle(`handler: Function`)
 
-Throttles the given Function handler to ensure it is only called once and respects the default refresh rate of the component. The actual delay can be adjusted by defined the `throttle` property to the component. By default it will throttle at 60 FPS.
+Throttles the given Function handler to ensure it is only called once and respects the default refresh rate of the component. The actual delay can be adjusted by defined the `throttleTimeout` property to the component. By default it will throttle at 60 FPS.
 
 ##### \_isComponentContext(element: Element)
 
@@ -213,4 +213,4 @@ Checks if the given Element exists within the Shadow Dom and Regular Dom within 
 ##### \_context()
 
 Should return the main context for the current component this will be the actual
-Shadow Dom if there is no parent reference defined for the current component.
+Shadow Dom if there is no parent reference defined from the current component.
